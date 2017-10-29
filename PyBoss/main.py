@@ -1,7 +1,5 @@
 
-# ## Option 3: PyBoss
-
-# ![Boss](Images/boss.jpg)
+# Option 3: PyBoss
 
 # In this challenge, you get to be the _boss_. You oversee hundreds of employees across the country 
 # developing Tuna 2.0, a world-changing snack food based on canned tuna fish. 
@@ -34,13 +32,37 @@
 # ```
 
 # * In summary, the required conversions are as follows:
-
 #   * The `Name` column should be split into separate `First Name` and `Last Name` columns.
-
 #   * The `DOB` data should be re-written into `DD/MM/YYYY` format.
-
 #   * The `SSN` data should be re-written such that the first five numbers are hidden from view.
-
 #   * The `State` data should be re-written as simple two-letter abbreviations.
-
 # * Special Hint: You may find this link to be helpful—[Python Dictionary for State Abbreviations](https://gist.github.com/afhaque/29f0f4f37463c447770517a6c17d08f5).
+
+
+# -*- coding: UTF-8 -*-
+
+# import related dependencies
+import os
+import csv
+
+Names = []
+
+FirstName = []
+LastName = []
+
+# set the file path
+filepath = os.path.join("raw_data","employee_data1.csv")
+
+# Open the file by calling open,storing in a file handler and then read-in using the csv.DictReader method.
+with open (filepath,'r') as fh:
+    reader = csv.DictReader(fh)
+    for row in reader:
+        Names.append(row["Name"])
+    
+
+for name in Names:
+    FirstName.append(name.split()[0])
+    LastName.append(name.split()[1])
+
+print(FirstName)
+print(LastName)
