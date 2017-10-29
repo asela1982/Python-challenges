@@ -32,46 +32,72 @@
 #  without massive re-writes). In addition, your final script should both print the analysis to 
 # the terminal and export a text file with the results.
 
+# import the dependencies
 import csv
 import os
-from collections import Counter
 
-candidate = Counter()
+# Set empty list variables
+Voterid = []
+County = []
+Candidate = []
 
-votes = 0
-
+# file path
 filepath = os.path.join("raw_data","election_data_2.csv")
 
-with open(filepath,'r') as file:
-    csvreader = csv.reader(file,delimiter=",")
-    header = next(csvreader)
+# Open pypoll CSV
+with open(filepath, 'r') as fh:
+    csvReader = csv.reader(fh, delimiter=',')
 
-    for row in csvreader:
-        votes = votes + 1
-        candidate[row[2]] += 1
+    # Skip headers
+    next(csvReader, None)
 
+    for row in csvReader:
+
+        # Append data from the row
+        Voterid.append(row[0])
+        County.append(row[1])
+        Candidate.append(row[2])
+
+# get key with max value
+def keywithmaxval(d):
+     """ a) create a list of the dict's keys and values; 
+         b) return the key with the max value"""  
+     v=list(d.values())
+     k=list(d.keys())
+     return k[v.index(max(v))]
+
+
+
+mydict ={}
+votes = 0
+for item in Candidate:
+    if item in mydict:
+        mydict[item] = mydict[item]+1
+    else:
+        mydict[item] = 0
+    votes += 1
 
 print("""Election Results
 -------------------------""")
-print(f"Total Votes: {votes}")
-print("""-------------------------""")
+print("Total Votes: {a:,}".format(a=votes))
+print("-------------------------")
+for key,value in mydict.items():
+    perc = value/votes
+    print("{a:}: {b:.2%} ({c:,})".format(a=key,b=perc,c=value) )
+print("-------------------------")
+print("Winner: {a:}".format(a=keywithmaxval(mydict)))
+print("-------------------------")
 
 
-candidate = dict(candidate)
-
-for key,value in candidate.items():
-    percentage = '{0:.1%}'.format(float(value)/float(votes))
-    print(f"{key}: {percentage} ({value})")
-
-print("""-------------------------""")
-
-def keywithmaxvalue(dict):
-    votes = list(dict.values())
-    candidate = list(dict.keys())
-    max_candidate = candidate[votes.index(max(votes))]
-    max_votes = max(votes)
-    print(f"Winner: {max_candidate}") 
-
-keywithmaxvalue(candidate)
-
-print("""-------------------------""")
+# print the output to a text file
+with open("Output.txt", "w") as text_file:
+    text_file.write("""Election Results
+-------------------------"""+ '\n')
+    text_file.write("Total Votes: {a:,}".format(a=votes)+'\n')
+    text_file.write("""-------------------------"""+ '\n')
+    for key,value in mydict.items():
+        perc = value/votes
+        text_file.write("{a:}: {b:.2%} ({c:,})".format(a=key,b=perc,c=value)+ '\n' )
+    text_file.write("""-------------------------"""+ '\n')
+    text_file.write("Winner: {a:}".format(a=keywithmaxval(mydict))+ '\n')
+    text_file.write("""-------------------------""")
